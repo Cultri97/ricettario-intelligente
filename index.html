@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="it">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+  <link href="./manifest.webmanifest" rel="manifest"/>
+  <meta content="#286247" name="theme-color"/>
+  <meta content="yes" name="apple-mobile-web-app-capable"/>
+  <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
+  <link href="./icons/apple-touch-icon.png" rel="apple-touch-icon"/>
+  <meta content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'" http-equiv="Content-Security-Policy"/>
+  <script defer="" src="./local-api.js">
+  </script>
+  <script defer="" src="./mobile.js">
+  </script>
+  <title>
+   Ricettario Intelligente
+  </title>
+  <link href="./icons/icon-192.png" rel="icon"/>
+  <link href="./style.css" rel="stylesheet"/>
+  <script defer="" src="./app.js">
+  </script>
+  <script defer="" src="./shopping.js">
+  </script>
+  <script defer="" src="./plans.js">
+  </script>
+ </head>
+ <body>
+  <header>
+   <div class="brand">
+    <span aria-hidden="true" class="logo">
+     ri
+    </span>
+    <div>
+     Ricettario
+     <strong>
+      Intelligente
+     </strong>
+     <small>
+      Il tuo piano, un giorno alla volta.
+     </small>
+    </div>
+   </div>
+   <span class="local">
+    ● Dati sul dispositivo
+   </span>
+  </header>
+  <main>
+   <section class="panel" id="onboarding">
+    <p class="eyebrow">
+     RICETTARIO SUL TUO IPHONE
+    </p>
+    <h1>
+     Il tuo piano, anche offline.
+    </h1>
+    <p>
+     Importa l’archivio dal Mac per ritrovare piano, spesa e dispensa. I dati rimangono soltanto su questo dispositivo.
+    </p>
+    <label class="file-button">
+     Importa archivio personale
+     <input accept="application/json,.json" id="first-import" type="file"/>
+    </label>
+    <p class="muted">
+     Usa il file TRASFERIMENTO_IPHONE.json preparato sul Mac. Non caricarlo su GitHub.
+    </p>
+    <p id="startup-error" role="alert">
+    </p>
+   </section>
+   <div hidden="" id="application">
+    <div class="mobile-status">
+     <span id="offline-status" role="status">
+     </span>
+     <button id="install-help" type="button">
+      Installa su iPhone
+     </button>
+    </div>
+    <p class="muted" id="offline-ready" role="status">
+     Preparazione dell’app per l’uso offline…
+    </p>
+    <p class="panel" hidden="" id="install-instructions">
+     In Safari premi Condividi, Aggiungi alla schermata Home e Apri come app web. Dopo il primo caricamento completo, l’app è disponibile anche senza connessione.
+    </p>
+    <div class="panel" hidden="" id="update-notice">
+     È disponibile una nuova versione.
+     <button id="apply-update" type="button">
+      Aggiorna app
+     </button>
+    </div>
+    <section class="panel" id="backup-panel">
+     <details>
+      <summary>
+       Backup e trasferimento dati
+      </summary>
+      <p>
+       Esporta periodicamente una copia in File. Se cancelli i dati del sito o cambi telefono, servirà per recuperarli. Non c’è sincronizzazione con il Mac.
+      </p>
+      <button id="export-backup" type="button">
+       Esporta backup
+      </button>
+      <label class="file-button">
+       Importa backup
+       <input accept="application/json,.json" id="restore-backup" type="file"/>
+      </label>
+      <p id="backup-status" role="status">
+      </p>
+     </details>
+    </section>
+    <div class="intro">
+     <p class="eyebrow">
+      IL TUO PIANO ALIMENTARE
+     </p>
+     <h1>
+      Ogni giorno, con semplicità.
+     </h1>
+     <p>
+      Alimenti, quantità e indicazioni del tuo piano originale, sempre a portata di mano.
+     </p>
+    </div>
+    <p hidden="" id="error" role="alert">
+    </p>
+    <nav aria-label="Sezioni" class="sections">
+     <button aria-pressed="true" class="active" id="tab-plan">
+      Piano
+     </button>
+     <button aria-pressed="false" id="tab-shopping">
+      Spesa
+     </button>
+     <button aria-pressed="false" id="tab-pantry">
+      Dispensa
+     </button>
+     <button aria-pressed="false" id="tab-manage">
+      Gestisci piano
+     </button>
+    </nav>
+    <section hidden="" id="shopping">
+     <h2>
+      La tua spesa
+     </h2>
+     <p>
+      Prepara la lista e sottrai automaticamente ciò che hai già in dispensa.
+     </p>
+     <form class="panel" id="shopping-form">
+      <label>
+       Dal
+       <input id="shop-start" required="" type="date"/>
+      </label>
+      <label>
+       Al
+       <input id="shop-end" required="" type="date"/>
+      </label>
+      <label>
+       <input checked="" id="exclude-outside" type="checkbox"/>
+       Escludi pasti fuori casa
+      </label>
+      <button type="submit">
+       Crea lista della spesa
+      </button>
+      <button id="customize-shopping" type="button">
+       Personalizza con sostituzioni
+      </button>
+     </form>
+     <section class="panel" hidden="" id="shopping-customization">
+      <h3>
+       Sostituzioni per questa spesa
+      </h3>
+      <p>
+       Lascia il piano originale oppure scegli un’alternativa per ciascuna data. Le sostituzioni valgono solo per queste date; nelle settimane successive torna il piano di base.
+      </p>
+      <button id="reset-customization" type="button">
+       Torna al piano originale
+      </button>
+      <div id="customization-options">
+      </div>
+     </section>
+     <div id="resolutions">
+     </div>
+     <p id="shopping-status" role="status">
+     </p>
+     <div id="shopping-lists">
+     </div>
+    </section>
+    <section hidden="" id="pantry">
+     <h2>
+      La tua dispensa
+     </h2>
+     <p>
+      Gli acquisti entrano qui quando completi la spesa. I consumi dei giorni trascorsi vengono scalati all’apertura dell’app, seguendo la ricorrenza dei giorni configurati nelle spese completate, assumendo che tu abbia seguito il piano. Il giorno corrente si scala dal giorno successivo. Una lista settimanale completa configura tutti e sette i giorni; una lista personalizzata configura solo i giorni inclusi.
+     </p>
+     <form class="panel" id="pantry-form">
+      <label>
+       Alimento
+       <select id="pantry-food" required="">
+       </select>
+      </label>
+      <label>
+       Quantità totale presente
+       <input id="pantry-quantity" min="0" required="" step="any" type="number"/>
+      </label>
+      <label>
+       Unità
+       <select id="pantry-unit">
+        <option>
+         g
+        </option>
+        <option>
+         kg
+        </option>
+        <option>
+         ml
+        </option>
+        <option>
+         cucchiai
+        </option>
+        <option>
+         pezzi
+        </option>
+        <option>
+         pezzo
+        </option>
+        <option>
+         fette
+        </option>
+        <option>
+         cucchiaini
+        </option>
+        <option>
+         bottiglia
+        </option>
+        <option>
+         vasetto
+        </option>
+       </select>
+      </label>
+      <button type="submit">
+       Aggiorna quantità
+      </button>
+     </form>
+     <p class="muted">
+      Inserisci il totale rimasto, non la quantità da aggiungere. 1 kg viene registrato come 1000 g; le altre unità restano separate.
+     </p>
+     <p class="muted">
+      Puoi correggere le quantità qui sotto, anche diminuendole o inserendo 0. Premi Salva accanto all’alimento per confermare.
+     </p>
+     <div id="pantry-items">
+     </div>
+     <div id="pantry-notes">
+     </div>
+     <section aria-live="polite" class="panel" id="access-summary">
+      <h3>
+       Dall’ultimo accesso
+      </h3>
+      <p>
+       Caricamento del riepilogo…
+      </p>
+     </section>
+    </section>
+    <section hidden="" id="manage">
+     <h2>
+      Gestisci piano
+     </h2>
+     <p>
+      Inserisci il piano del nutrizionista e verifica le quantità prima di salvarlo. Il piano precedente resta nello storico.
+     </p>
+     <div class="plan-actions">
+      <button id="copy-plan" type="button">
+       Parti dal piano attuale
+      </button>
+      <button id="blank-plan" type="button">
+       Nuovo piano vuoto
+      </button>
+     </div>
+     <p id="plan-editor-status" role="status">
+     </p>
+     <form class="panel" hidden="" id="plan-editor">
+      <div class="plan-fields">
+       <label>
+        Nome del piano
+        <input id="new-plan-title" maxlength="120" required=""/>
+       </label>
+       <label>
+        Valido dal
+        <input id="new-plan-date" required="" type="date"/>
+       </label>
+      </div>
+      <details class="panel">
+       <summary>
+        Allega un PDF come riferimento (facoltativo)
+       </summary>
+       <p>
+        Il PDF resta su questo dispositivo. In questa versione trascrivi tu i pasti: non viene estratto o applicato automaticamente.
+       </p>
+       <input accept="application/pdf,.pdf" id="new-plan-pdf" type="file"/>
+       <p class="muted" id="plan-pdf-name">
+       </p>
+       <a hidden="" id="plan-pdf-preview" rel="noopener" target="_blank">
+        Apri il PDF di riferimento
+       </a>
+      </details>
+      <div id="plan-days">
+      </div>
+      <p class="muted">
+       Le sostituzioni del piano precedente non vengono trasferite automaticamente. Per le alternative scritte nel nuovo piano aggiungi un gruppo di opzioni.
+      </p>
+      <button type="submit">
+       Verifica e mostra anteprima
+      </button>
+     </form>
+     <section class="panel" hidden="" id="plan-review">
+      <h3>
+       Controlla prima di salvare
+      </h3>
+      <div id="plan-review-content">
+      </div>
+      <label>
+       <input id="plan-reviewed" type="checkbox"/>
+       Ho confrontato alimenti, quantità, unità e alternative con il piano del nutrizionista.
+      </label>
+      <button id="save-new-plan" type="button">
+       Salva nuovo piano
+      </button>
+      <button id="back-plan-edit" type="button">
+       Torna alla modifica
+      </button>
+     </section>
+     <h3 class="plan-history-title">
+      Piani salvati
+     </h3>
+     <div id="plan-history">
+     </div>
+     <datalist id="plan-food-names">
+     </datalist>
+    </section>
+    <section id="planner">
+     <nav aria-label="Scegli il giorno">
+      <div class="quick">
+       <button id="today">
+        Oggi
+       </button>
+       <button id="tomorrow">
+        Domani
+       </button>
+      </div>
+      <label class="calendar" for="date">
+       Scegli una data
+       <input id="date" required="" type="date"/>
+      </label>
+     </nav>
+     <div class="day-heading">
+      <div>
+       <p class="eyebrow" id="relative">
+       </p>
+       <h2 id="daytitle">
+       </h2>
+      </div>
+      <span class="muted" id="count">
+      </span>
+     </div>
+     <div aria-live="polite" id="meals">
+     </div>
+     <p class="muted" id="validity">
+     </p>
+    </section>
+    <footer>
+     Ricettario Intelligente · Versione iPhone
+     <span>
+      Dati originali, nessuna modifica automatica.
+     </span>
+    </footer>
+   </div>
+  </main>
+ </body>
+</html>
